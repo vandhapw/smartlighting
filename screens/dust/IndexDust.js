@@ -1,0 +1,62 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ * @flow strict-local
+ */
+
+import React, {useState, useEffect} from 'react';
+import {
+    Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+  ActivityIndicator,
+  Image
+} from 'react-native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+import DustChart from './DustChart';
+import DustData from './DustData';
+// import DustData from '../sidebar/DustData';
+
+
+
+function IndexDust(){
+
+  const Tab = createMaterialTopTabNavigator();
+
+    return (
+     <Tab.Navigator>
+        <Tab.Screen name='Dust Density Data' component={DustData} />
+        <Tab.Screen name='Chart' component={DustChart} />
+     </Tab.Navigator>
+     
+    )
+};
+
+const styles = StyleSheet.create({
+  sectionContainer: {
+    marginTop: 32,
+    paddingHorizontal: 24,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  sectionDescription: {
+    marginTop: 8,
+    fontSize: 18,
+    fontWeight: '400',
+  },
+  highlight: {
+    fontWeight: '700',
+  },
+});
+
+export default IndexDust;
