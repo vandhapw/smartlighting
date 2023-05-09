@@ -70,6 +70,9 @@ const AirQuality = ({navigation}) => {
   const [selfTime, setSelfTime] = useState("");
   const [timerDisplay, setTimerDisplay] = useState("00:00:00");
   const [onoffstatus, setOnOffStatus] = useState();
+  const [statusTemperature, setStatusTemperature] = useState();
+  const [statusHumidity, setStatusHumidity] = useState();
+  const [statusDust, setStatusDust] = useState();
   
 
   const bottomSheet = useRef();
@@ -165,7 +168,10 @@ const AirQuality = ({navigation}) => {
   const fetchCurrentData = async() => {
     await getSwitchValue()
     .then((res) => {
-      if(res[0].temperature > 0){
+      setStatusDust(res[0].dust)
+      setStatusHumidity(res[0].hum)
+      setStatusTemperature(res[0].temp)
+      if(res[0].temp > 0){
         setTextSwitch(1)
       }else {
         setTextSwitch(0)

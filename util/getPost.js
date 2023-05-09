@@ -1,4 +1,5 @@
 import axios from "axios";
+import { err } from "react-native-svg/lib/typescript/xml";
 
 // const BACKEND_URL = 'https://data.mongodb-api.com/app/data-uwehr/endpoint/data/v1'
 
@@ -128,6 +129,7 @@ export const getSensorValue = async () => {
         'https://vpw.my.id/microcontroller/sensorData.json',
       );
       const json = await response.json();
+      console.log(json)
         return json;
     } catch (error) {
       console.error(error);
@@ -142,7 +144,7 @@ export const getSensorValue = async () => {
         'http://139.150.73.211:8000/scheduler/api/dust/switch/get/'
       );
       const json = await response.json();
-      console.log(json)
+      // console.log("tes",json)
         return json;
     } catch (error) {
       console.error(error);
@@ -162,34 +164,103 @@ export const getSensorValue = async () => {
   //   return json;
   // }
 
-  export const postSwitchDevice = async (humidity,temperature,dust,lighting, token) => {
+  export const postSwitchDevice = async (humidity, temperature,dust,lighting) => {
+    console.log(humidity, temperature, dust, lighting)
+    const options = {
+      method: "POST",
+      headers: {'Content-Type': 'application/json','Accept' : 'application/json, text/plain, */*',},
+      body:JSON.stringify({
+        "humidity":humidity, 
+        "temperature":temperature,
+        "dust":dust, 
+        "lighting":lighting
+      })
+    };
+    const response = await fetch('http://139.150.73.211:8000/scheduler/dust/switch/modify/adu/', options)
+    const data = await response.json()
+    // console.log(data)
+    return data
+    // console.log("tes",data)
+    // try {
+    //   const response = await axios.post(
+    //     // 'https://vpw.my.id/microcontroller/sendDataMobile.php', {
+    //       'http://139.150.73.211:8000/scheduler/dust/switch/modify/adu/',{
+    //         // method: 'POST',
+    //         headers: {
+    //             'Accept' : 'application/json',
+    //             'Content-Type' : 'application/json',
+    //             // "X-CSRFToken": 'sessionid=uvs2ttoklubvx58nn08vyztbekf7ncvk',
+    //             //  "Content-Length" : 1*DIGIT
+    //         },
+    //         body: JSON.stringify({
+    //             "humidity": humidity,
+    //             "temperature": temperature,
+    //             "dust": dust,
+    //             "lighting": lighting
+    //         })
+    //     }        
+    //   );
+    //   console.log(response)
+    //   const json = await response.json();
+    // return json;
+    // } catch (error) {
+    //   console.error(error);
+    // }
+  };
+
+  export const storingLighting = async (expenseData) => {
+    // console.log("expnse", "("+expenseData.coordinate.latitude+","+expenseData.coordinate.longitude+")")
+   
+    const options = {
+      method: "POST",
+      headers: {'Content-Type': 'application/json','Accept' : 'application/json, text/plain, */*',},
+      body:JSON.stringify({
+        "device_id":expenseData.device_id, 
+                "lightingValue":expenseData.lightingPicked.lux,
+                "lightingLevel":expenseData.lightingPicked.level, 
+                "coordinate":"("+expenseData.coordinate.latitude+","+expenseData.coordinate.longitude+")",
+                "room" : expenseData.room,
+                "numberPeople": expenseData.numberPeople,
+                "datetime": expenseData.datetime,
+                "timestamps": expenseData.timestamps,
+                "saveCategory": expenseData.categoryPicked,
+                "ambientLight": expenseData.ambientLight
+      })
+    };
+    await fetch('https://vpw.my.id/lighting/lightingProcess.php', options)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        return data
+    })
+    .catch(err => {
+      console.log(err) 
+      return err
+    })
+      
+    
+    // const data = await response.data
+    // console.log(data)
+    // return data
+    // const data = await response.json()
+    // console.log(data)
+  };
+
+  export const getLightingData = async () => {
     // console.log('a')
     try {
       const response = await fetch(
-        // 'https://vpw.my.id/microcontroller/sendDataMobile.php', {
-          'http://139.150.73.211:8000/scheduler/dust/switch/modify/adu/',{
-            method: 'POST',
-            headers: {
-                'Accept' : 'application/json',
-                'Content-Type' : 'application/json',
-                "X-CSRFToken": 'sessionid=uvs2ttoklubvx58nn08vyztbekf7ncvk',
-                //  "Content-Length" : 1*DIGIT
-            },
-            body: JSON.stringify({
-                "humidity": humidity,
-                "temperature": temperature,
-                "dust": dust,
-                "lighting": lighting
-            })
-        }        
+        'https://vpw.my.id/lighting/lighting.json'
       );
-      console.log(response)
       const json = await response.json();
-    return json;
+      // console.log("tes",json)
+        return json;
     } catch (error) {
       console.error(error);
     }
   };
+
+
 
   // article
   

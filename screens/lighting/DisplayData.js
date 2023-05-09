@@ -22,16 +22,15 @@ import {
   Switch,
   ToastAndroid,
   Pressable,
-  TouchableOpacity
+  TouchableOpacity,
+  RefreshControl
 } from 'react-native';
 import { getSensorValue, getSwitchValue, sendDataMobile } from '../../util/getPost';
 import { Card } from 'react-native-paper';
 
 import { COLORS, FONTS, icons, SIZES } from '../../constants';
-import BottomSheet from 'react-native-gesture-bottom-sheet';
 
-import { sendingEmail } from '../../util/sendingEmail';
-
+import { getLightingData } from '../../util/getPost';
 
 const IconLabel = ({icon, label}) => {
   return (
@@ -51,7 +50,7 @@ const IconLabel = ({icon, label}) => {
   );
 };
 
-function DustData(){
+function DisplayData(){
 
   const [dataDust, setDustData] = useState();
   const [isLoading, setLoading] = useState(true);
@@ -76,61 +75,33 @@ function DustData(){
 
   // const styles = getStyles(isColor);
 
-  const bottomSheet = useRef();
+  const [refreshing, setRefreshing] = React.useState(false);
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      getDustData()
+    }, 2000);
+  }, []);
 
 
   let last10Data = []
   let dustValue;
   let dustIndex={};
-  let alarmFalseData = false; // default false
-  let alarmBadData = false; // default false
+  
 
   const getDustData = async () => {
-    await getSensorValue()
+    await getLightingData()
     .then ((res) => {
       let tenData = res.filter(function(el,index){
         setLastData(res.length)
         return index >= res.length - initialData; // default 10
       })
-      // console.log("tenData", initialData)
-      // last10Data.push(tenData)
-      tenData.map((val) => {
-        // console.log(val.dustDensity)
-        let dust = val.dustDensity;
-        dust = parseInt(dust);
-        // dust = null
-        switch (true){
-          case (dust <= 30):
-            dustIndex = {"datetime": val.datetime, "dustDensity": val.dustDensity, "humidity": val.humidity, "temperature": val.temperature, "timestamps": val.timestamps, "index":"Good", "color": "#00337C"}
-            break;
-          case (dust > 30 && dust <= 80):
-            dustIndex = {"datetime": val.datetime, "dustDensity": val.dustDensity, "humidity": val.humidity, "temperature": val.temperature, "timestamps": val.timestamps, "index":"Normal", "color": "#1F8A70"}
-            break;
-          case (dust > 80 && dust <= 150):
-            dustIndex = {"datetime": val.datetime, "dustDensity": val.dustDensity, "humidity": val.humidity, "temperature": val.temperature, "timestamps": val.timestamps, "index":"Bad", "color": "#A10035"}
-            break;
-          case (dust > 150):
-            dustIndex = {"datetime": val.datetime, "dustDensity": val.dustDensity, "humidity": val.humidity, "temperature": val.temperature, "timestamps": val.timestamps, "index":"Warning", "color": "#FEDB39"}
-            alarmBadData = true;
-            dustValue = dust;
-            break;
-          default:
-        }
-        if(dust == null){
-          alarmFalseData = true;
-          dustValue = dust
-        }
-        last10Data.push(dustIndex)
-        last10Data.reverse()          
-        // onChangeValue(dust)
-      })
-        setDustData(last10Data)
+    
+        setDustData(tenData)
         setLoading(false)
-        console.log(alarmFalseData, "and ", dustValue);
-        if(alarmFalseData || alarmBadData){
-          send_mail(dustValue)
-        }
+       
         last10Data = []
 
         // console.log(tenData)
@@ -140,31 +111,6 @@ function DustData(){
     // last10Data = [];
   }
 
-  const currentData = async() =>{
-      await getSwitchValue()
-      .then((data) => {
-        // console.log("data ",data)
-        setCurrentTemperature(data[0].temperature)
-        setCurrentHumidity(data[0].humidity)
-        setCurrentDust(data[0].dust)
-        setCurrentLighting(data[0].lighting)
-        if(data[0].dust > 0){
-          setIsEnabled(false)
-        }else {
-          setIsEnabled(true)
-        }
-      })
-      .catch((err)=> console.log(err))
-  }
-
-  const onoffStatus = async(humidity, temperature, dust, lighting) => {
-    await sendDataMobile(humidity, temperature, dust, lighting)
-    .then((res) => {
-      ToastAndroid.show("Change Status Successfully!", ToastAndroid.SHORT)
-    })
-    .catch((err) => err)
-    // console.log(temperature)
-  }
 
   const previousPage = () => {
     setLoading(true)
@@ -180,63 +126,43 @@ function DustData(){
     getDustData()
   }
 
-  const send_mail = async(dust) => {
-    // if(dataDust.length > 0){
-    //   dataDust.map((val) => {
-        if(dust == null){
-          let to = "jervis.vandraz@gmail.com";
-          let subject = "Error Receive Sensor Data";
-           let contents = "Dear Customer, \n I would like to inform to you that based on dust sensor value of our device, there is error on receiving data, please check the device \n Thank you \n Regards, \n Klaen team."
-          // let contents = "Dear Customer, \n I would like to inform to you that, based on dust sensor value of our device, the dust sensor value is Bad, please check your room regularly \n turn on your humidifier. \n Thank you very much for your attention. \n Regards, \n Klaen team."
-          sendingEmail(to, subject, contents)
-          .then((res) => {
-          })
-          .catch((err) => {console.log(err)})
-        }
-        // dust > 80 && dust <= 150
-        else if (dust > 150){
-          let to = "jervis.vandraz@gmail.com";
-          let subject = "Warning Dust Value of your Room";
-          let contents = "Dear Customer, \n I would like to inform to you that based on dust sensor value of our device, the dust sensor value is Warning (Worst), please check your room regularly \n. \n Thank you very much for your attention. \n Regards, \n Klaen team."
-          sendingEmail(to, subject, contents)
-          .then((res) => {
-            bottomSheet.current.show()
-            // console.log('Message send successfully');
-          })
-          .catch((err) => {console.log(err)})
-        }
-    //     })
-
-    // }
-    
-    // console.log(contents)
-  }
+  
+  
 
   const Item = ({item}) => (
-    <Card title={"Dust Data"} style={[styles.shadow,{marginBottom: '2%'}]}>
+    <Card title={"Dust Data"} style={[styles.shadow,{marginBottom: '3%'}]}>
     <View style={[styles.cardList]}>
-      <View style={{paddingEnd: 20}}>
-      <IconLabel icon={icons.dust_icon} label={""} />
+      <View>
+      <IconLabel icon={icons.lightingIcon} label={""} />
       </View>
       <View>
-      <Text style={[styles.title,{color:'#060047'}]}>Dust Value : </Text>
+      <Text style={[styles.title,{color:'#060047'}]}>Lighting Value : </Text>
       <Text style={styles.smallText}>On : {item.datetime}</Text>
+      <Text style={styles.smallText}>Coordinate : {item.coordinate}</Text>
+      <View style={{flex: 1, flexDirection: 'row'}}>
+        <View>
+        <Text style={styles.smallText}> - Room : {item.room != null ? item.room : "null"}</Text>
+        </View>
+        <View  style={{paddingLeft: 25}}>
+        <Text style={styles.smallText}> - Number of people : {item.room != null ? item.room : "null"}</Text>
+        </View>
       </View>
-      <View>
-      <Text style={[styles.score,{color:'#060047'}]}>{item.dustDensity}</Text>
+      <Text style={styles.smallText}>Behaviour : {item.saveCategory}</Text>
+      <Text style={styles.smallText}>AmbientLight : {item.ambientLight}</Text>
+      </View>
+      <View style={{marginLeft: -100}}>
+      <Text style={[styles.score,{color:'#060047', marginRight: -20}]}>{item.lightingValue}</Text>
     </View>
-    <View style={{paddingStart: 20, width: '30%'}}>
-      <Text style={[styles.index, {backgroundColor: item.color}]}>{item.index}</Text>
+    <View style={{ width: '30%', marginLeft: 50}}>
+      <Text style={[styles.index, {color: '#000000'}]}>Level {item.lightingLevel}</Text>
     </View>
-    </View>
-   
+    </View>   
     </Card>
   );
 
 
   useEffect(() => {
     getDustData();
-    currentData();
     // console.log(dataDust)
    }, [initialData])
 
@@ -265,7 +191,7 @@ function DustData(){
               styles.shadow,
             ]}>
               <Text style={{...FONTS.h2, textAlign: 'center', paddingTop: 10, color:'#000000', fontWeight:'bold', textDecorationLine:'underline'}}>
-            Dust Sensor Data
+            Lighting Data
           </Text>
             <View style={{flexDirection: 'row'}}>
               <View
@@ -273,7 +199,6 @@ function DustData(){
                   marginHorizontal: SIZES.radius,
                   justifyContent: 'space-around',
                 }}>
-                <Text style={{...FONTS.h3, marginStart: 35, color:'#000000'}}>Sensor Status : </Text>
               </View>
               <View
                 style={{
@@ -281,15 +206,6 @@ function DustData(){
                   marginStart: 20,
                   justifyContent: 'space-around',
                 }}>
-                <Text style={{...FONTS.h1, color: '#CD0404', fontWeight: 'bold'}}>
-                <Switch 
-              trackColor={{false: '#CD0404', true:'#1F8A70'}}
-              thumbColor={isEnabled ? '#EEEEEE' : '#EEEEEE'}
-              onValueChange={toggleSwitch}
-              value={isEnabled}
-            />
-            {isEnabled ? "OFF" : "ON"}
-                </Text>
               </View>
             </View>
           </View>
@@ -324,28 +240,15 @@ function DustData(){
               return item.timestamps;
             }}
             renderItem={Item}
+            refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
           />
 
         
       }
 
-         {/* // bottom Sheet */}
-         <BottomSheet hasDraggableIcon ref={bottomSheet} height={200}>
-          <View
-            style={{
-              backgroundColor: '#CD0404',
-              padding: 6,
-              height: 200,
-              alignItems: 'center',
-              justifyContent: 'center',
-              width:'100%',
-              marginTop:0
-              // position:'absolute'
-            }}>
-            <Text style={[styles.panelTitle, {color:'#ffffff', fontSize: 16, textAlign:'center', paddingBottom:10}]}>The device is detecting</Text>
-            <Text style={[styles.panelTitle,{fontSize: 24, textAlign:'center', color:'#ffffff', fontWeight:'bold', textDecorationLine:'underline'}]}>Your room's Dust Value is Bad</Text>
-          </View>
-        </BottomSheet>
+        
+        
     </SafeAreaView>
   );
 };
@@ -370,14 +273,13 @@ const styles=StyleSheet.create({
     padding: 20,
     flex: 1,
     flexDirection:'row',
-    maxHeight:75
+    maxHeight:130
   },
 
   score: {
     // padding: 10,
     fontSize: 14,
     fontWeight:'bold',
-    paddingStart: '5%',
     // width:'100%',
     // backgroundColor: 'yellow',
     textAlign:'center',
@@ -387,7 +289,6 @@ const styles=StyleSheet.create({
     padding: 5,
     fontSize: 12,
     fontWeight:'bold',
-    marginStart:'10%',
     // paddingStart:20,
     // marginEnd:'10%',
     // backgroundColor:isColor,
@@ -414,4 +315,4 @@ const styles=StyleSheet.create({
 
 });
 
-export default DustData;
+export default DisplayData;

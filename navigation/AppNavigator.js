@@ -9,9 +9,11 @@ import {
   View,
   Alert
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerContentScrollView,DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import  Ionicons  from 'react-native-vector-icons/Ionicons';
 
 
 import WelcomeScreen from '../screens/Welcome';
@@ -30,13 +32,18 @@ import MainScreen from '../screens/MainScreen';
 import DetailNews from '../component/articles/DetailNews';
 import AllNews from '../component/articles/AllNews';
 import BackEndMenu from '../screens/backend-menu/BackEndMenu';
+import LightingScreen from '../screens/lighting/LightingScreen';
 // import ContextState like session
 import AuthenticationProcess, {AuthProcess} from '../util/AuthenticationProcess';
+
+import AmbientLight from '../screens/lighting/AmbientLight';
+import DisplayData from '../screens/lighting/DisplayData';
 
 
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
+const Tabs = createBottomTabNavigator();
 
 function DefineNavigator() {
   return (
@@ -105,17 +112,131 @@ function articleNavigator(){
 
   //testing
 function AuthStack(){
+  const navigation = useNavigation()
+   
+  
   return(
-    <Drawer.Navigator>
-    <Drawer.Screen name="Login" component={LoginScreen}
-    options={{
-      // headerTitle: () => (
-      //     ""
-      // ),
-      headerShown: false
-  }}
-    />
-</Drawer.Navigator>
+//     <Drawer.Navigator>
+//     <Drawer.Screen name="LightingScreen" component={LightingScreen}
+//     options={{
+//       // headerTitle: () => (
+//       //     ""
+//       // ),
+//       headerShown: false
+//   }}
+//     />
+// </Drawer.Navigator>
+
+
+  <Tabs.Navigator
+      screenOptions={{
+          tabBarShowLabel: false,
+          tabBarStyle: {
+              position:'absolute',
+              backgroundColor:'#0F64CD',
+              bottom:20,
+              left:30,
+              right:20,
+              elevation:2,
+              borderRadius: 15,
+              height:60
+          }
+      }}
+  >
+      <Tabs.Screen
+          name="LightingScreen"
+          component={LightingScreen}
+          options={{
+              tabBarIcon: () => (
+                  <View style={{alignItems:'center', justifyContent:'center'}}>
+                  <Ionicons
+                      name="aperture-outline"
+                      size={30}
+                      color='#ffffff'
+                  />
+                  <Text style={{fontSize:12, fontWeight:'bold', color: '#ffffff'}}>Lighting</Text>
+                  </View>
+              ),
+              headerShown: false
+          }}
+      />
+      <Tabs.Screen
+          name="TimeSetting"
+          component={LightingScreen}
+          listeners={({navigation}) => ({
+            tabPress: (e) => {
+              e.preventDefault()
+              navigation.navigate('LightingScreen', {showValue: 'show'})
+            }
+          })}
+          options={{
+              tabBarIcon: () => (
+                  <View style={{alignItems:'center', justifyContent:'center'}}>
+                  <Ionicons
+                      name="alarm-outline"
+                      size={30}
+                      color='#ffffff'
+                  />
+                  <Text style={{fontSize:12, fontWeight:'bold', color: '#ffffff'}}>Time</Text>
+                  </View>
+              ),
+              headerShown: false
+          }}
+
+      />
+      <Tabs.Screen
+          name="DisplayData"
+          component={DisplayData}
+          listeners={({navigation}) => ({
+            tabPress: (e) => {
+              e.preventDefault()
+              console.log('display')
+              navigation.navigate('DisplayData')
+            }
+
+
+          })}
+          options={{
+              tabBarIcon: () => (
+                  <View style={{alignItems:'center', justifyContent:'center'}}>
+                  <Ionicons
+                      name="documents-outline"
+                      size={30}
+                      color='#ffffff'
+                  />
+                  <Text style={{fontSize:12, fontWeight:'bold', color: '#ffffff'}}>Data</Text>
+                  </View>
+              ),
+              headerShown: false
+          }}
+      />
+        {/* <Tabs.Screen
+          name="AmbientLight"
+          component={AmbientLight}
+          listeners={({navigation}) => ({
+            tabPress: (e) => {
+              e.preventDefault()
+              console.log('Ambient')
+              navigation.navigate('AmbientLight')
+            }
+          })}
+          options={{
+              tabBarIcon: () => (
+                  <View style={{alignItems:'center', justifyContent:'center'}}>
+                  <Ionicons
+                      name="sunny-outline"
+                      size={30}
+                      color='#ffffff'
+                  />
+                  <Text style={{fontSize:12, fontWeight:'bold', color: '#ffffff'}}>Ambient Light</Text>
+                  </View>
+              ),
+              headerShown: false
+          }}
+      /> */}
+      
+  </Tabs.Navigator>
+
   )
 }
 
@@ -181,29 +302,7 @@ function AuthenticatedStack(){
       headerShown: true
   }}
     />
-    {/* <Drawer.Screen name="Air Quality" component={WelcomeScreen}
-    options={{
-      headerTitle: () => (
-          ""
-      ),
-      headerStyle: {
-      backgroundColor: '#990000'
-    },
-      headerShown: true
-  }}
-    /> */}
-  
-    {/* <Drawer.Screen name="Charts" component={ChartScreen}
-    options={{
-      headerTitle: () => (
-        ""
-    ),
-    headerStyle: {
-    backgroundColor: '#990000'
-  },
-      headerShown: true
-  }} */}
-    {/* /> */}
+    
     <Drawer.Screen name="Humidity" component={IndexHumidity}
     options={{
       headerTitle: () => (

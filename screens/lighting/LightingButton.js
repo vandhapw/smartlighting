@@ -21,6 +21,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { getSwitchValue, sendDataMobile, postSwitchDevice } from '../../util/getPost';
 import { useCsrfToken } from '@shopify/react-csrf';
 import AuthenticationProcess, {AuthProcess} from '../../util/AuthenticationProcess';
+import LightingStatus from './LightingStatus';
 
 
 const IconLabel = ({ icon, label }) => {
@@ -31,7 +32,7 @@ const IconLabel = ({ icon, label }) => {
                 resizeMode="cover"
                 style={{
                     width: 50,
-                    height: 50,
+                    height: 75,
                 }}
             />
             <Text style={{ marginTop: SIZES.padding, color: COLORS.gray, ...FONTS.h3 }}>{label}</Text>
@@ -39,15 +40,12 @@ const IconLabel = ({ icon, label }) => {
     )
 }
 
-const Lighting = ({ navigation }) => {
+const LightingButton = ({ navigation }) => {
 
   const [lampLevel, setLampLevel] = useState();
   const [textLevel, setTextLevel] = useState();
   const [isLevel, setLevel] = useState();
   const [isLoading, setLoading] = useState(true);
-  const [humidity, setHumidity] = useState();
-  const [temperature, setTemperature] = useState();
-  const [dust, setDust] = useState();
   const [styleSwitch, setStyleSwitch] = useState();
   const styles = getStyles(styleSwitch);
   const [inputLevel, setInputLevel] = useState();
@@ -92,15 +90,11 @@ const Lighting = ({ navigation }) => {
     }
   }
 
+
   const fetchCurrentData = async () => {
       await getSwitchValue()
       .then((res) => {    
         // console.log(res)    
-        setInputLevel(res[0].lighting)
-        setHumidity(res[0].hum);
-        setTemperature(res[0].temp);
-        setDust(res[0].dust);
-        console.log("hum ", res[0].hum, res[0].temp)
         currentState(res[0].lighting);
         switch (res[0].lighting){
           case 1:
@@ -143,9 +137,10 @@ const Lighting = ({ navigation }) => {
   
 
   async function sendLightingData(level){
+    console.log(level)
     // console.log("level ", humidity)
     // let csrfToken = authCtx.token.username
-    await postSwitchDevice(humidity, temperature,dust, level)
+    await postSwitchDevice(1, 1,1, level)
     .then((res) => {
       if(res.message == 'success'){
          ToastAndroid.show("Changing Lighting Level Successfully", ToastAndroid.SHORT)
@@ -162,7 +157,9 @@ const Lighting = ({ navigation }) => {
 
   const onChangeLampLevel = (level) => {
     setInputLevel(level)
-    setIsPushed(true)
+    // setIsPushed(true)
+    // console.log(level)
+   
     // switch (inputLevel){
     //   case 1:
     //     setLampLevel(icons.lamp100);
@@ -223,9 +220,6 @@ const Lighting = ({ navigation }) => {
     if(!isPushed){
       fetchCurrentData()
     }else {
-      // console.log("load", inputLevel)
-      console.log("load", temperature)
-      // fetchCurrentData();
       switch (inputLevel){
         case 1:
           setLampLevel(icons.lamp100);
@@ -273,102 +267,106 @@ const Lighting = ({ navigation }) => {
     // return () => currentState(inputLevel);
 },[inputLevel])
 
-// useMemo(()=> {
-//   fetchCurrentData()
-//   console.log("use memo ", inputLevel)
-// },[inputLevel])
-
-
-  // console.log("real time ", inputLevel)
     return (
-      
+
         <View style={styles.container}>
+            <LightingStatus props={inputLevel}/>
 
-          {/* Modal */}
-          <View style={styles.centeredView}>
-        </View>
-
-            {/* Header */}
-            <View style={{ flex: 1 }}>
-                {/* <Image
-                    source={images.skiVillaBanner}
-                    resizeMode="cover"
-                    style={{
-                        width: '100%',
-                        height: '80%',
-                    }}
-                /> */}
-                <Text style={{ ...FONTS.h2, textAlign:'center', paddingTop:30, color:'#000000' }}>Lighting Control</Text>
-                <View
-                    style={[{
-                        position: 'absolute',
-                        bottom: "20%",
-                        left: "5%",
-                        right: "5%",
-                        borderRadius: 15,
-                        padding: 2,
-                        // alignItems:'center',
-                        backgroundColor: COLORS.white,
-                    }, styles.shadow]}
-                >
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={[styles.shadow, COLORS.primary, {marginTop:30, marginStart:30}]}>
-                        <IconLabel icon={lampLevel}/>
-                        </View>
-
-                        <View style={{ marginHorizontal: SIZES.radius, justifyContent: 'space-around' }}>
-                            <Text style={{ ...FONTS.h1, marginStart:35, color:'#000000' }}>{textLevel}</Text>
-                        </View>
-                        <View style={{ marginHorizontal: SIZES.radius,marginStart:20, justifyContent: 'space-around' }}>
-                            <Text style={{ ...FONTS.h1, color:'green', fontWeight:'bold' }}>{isLevel}</Text>
-                        </View>
-                    </View>
-                    <View style={{position:'absolute', marginTop:90, marginStart:10}}>
-                      <Text style={{...FONTS.h4,color:'green', fontWeight:'bold'}}>Lighting Level</Text>
-                    </View>
-                </View>
-              </View>
-
-            {/* Body */}
-            <View style={{ flex: 1.5, bottom:'2%' }}>
+              <View style={{ flex: 1.5, bottom:'5%' }}>
             <Text style={{ ...FONTS.h4, textAlign:'center', paddingBottom:30, color:'#000000' }}>Push one of the button below to change lighting level</Text>
                 {/* Icons */}
                 <View style={{ flexDirection: 'row',  paddingHorizontal: SIZES.padding * 2, justifyContent: 'space-between' }}>
-                    <TouchableOpacity onPress={() => onChangeLampLevel(1)} style={{backgroundColor:{styleSwitch}}}>
-                    <IconLabel
-                        icon={icons.lamp100}  // level 1
-                        label="Lighter"
-                    />
-                    {/* <Text style={{position:'absolute', marginTop:75, fontSize:17, textAlign:'center', styleSwitch}}>asd</Text> */}
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => onChangeLampLevel(2)} style={styles.shadow}>
-                    <IconLabel
-                        icon={icons.lamp75} // level 2
-                        label="Light"
-                    />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => onChangeLampLevel(3)}>  
-                    <IconLabel
-                        icon={icons.lamp40} // level 2
-                        label="Soft"
-                    />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => onChangeLampLevel(4)}>
-                    <IconLabel
-                        icon={icons.lamp10} // level 2
-                        label="Softer"
-                    />  
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity onPress={() => onChangeLampLevel(5)}>
+                <View>
+                <TouchableOpacity onPress={() => onChangeLampLevel(0)}>
                     <IconLabel
                         icon={icons.lampOff} // level 2
                         label="Off"
+                    />                  
+                </TouchableOpacity>
+                <View>
+                <TouchableOpacity onPress={() => onChangeLampLevel(5)} style={[{paddingTop:20},styles.shadow]}>
+                    <IconLabel
+                        icon={icons.lamp40} // level 2
+                        label="Level 5"
+                    />
+                </TouchableOpacity> 
+                </View>
+                </View>
+                
+                <View>
+                <TouchableOpacity onPress={() => onChangeLampLevel(1)}>
+                    <IconLabel
+                        icon={icons.lamp10} // level 2
+                        label="Level 1"
                     /> 
-                    </TouchableOpacity>                 
+                </TouchableOpacity>  
+                <View>
+                <TouchableOpacity onPress={() => onChangeLampLevel(6)} style={[{paddingTop:20},styles.shadow]}>
+                    <IconLabel
+                        icon={icons.lamp75} // level 2
+                        label="Level 6"                        
+                    />
+                    </TouchableOpacity>   
+                </View>
+                </View>
+                
+                <View>
+                <TouchableOpacity onPress={() => onChangeLampLevel(2)}>
+                    <IconLabel
+                        icon={icons.lamp10} // level 2
+                        label="Level 2"
+                    />  
+                </TouchableOpacity> 
+                <View>
+                <TouchableOpacity onPress={() => onChangeLampLevel(7)} style={[{paddingTop:20},styles.shadow]}>
+                    <IconLabel
+                        icon={icons.lamp75} // level 2
+                        label="Level 7"
+                        
+                    />
+                    </TouchableOpacity>
+                </View>
+                </View>
+                
+                 <View>
+                 <TouchableOpacity onPress={() => onChangeLampLevel(3)}>  
+                    <IconLabel
+                        icon={icons.lamp40} // level 2
+                        label="Level 3"
+                    />
+                    </TouchableOpacity> 
+                    <View>
+                    <TouchableOpacity onPress={() => onChangeLampLevel(8)} style={{backgroundColor:{styleSwitch}, paddingTop:20}}>
+                    <IconLabel
+                        icon={icons.lamp100}  // level 1
+                        label="Level 8"
+                    />
+                    {/* <Text style={{position:'absolute', marginTop:75, fontSize:17, textAlign:'center', styleSwitch}}>asd</Text> */}
+                    </TouchableOpacity>
+                    </View>
+                 </View>
+                  
+                    <View>
+                    <TouchableOpacity onPress={() => onChangeLampLevel(4)}>  
+                    <IconLabel
+                        icon={icons.lamp40} // level 2
+                        label="Level 4"
+                    />
+                    </TouchableOpacity>
+                    <View>
+                    <TouchableOpacity onPress={() => onChangeLampLevel(9)} style={{backgroundColor:{styleSwitch}, paddingTop:20}}>
+                    <IconLabel
+                        icon={icons.lamp100}  // level 1
+                        label="Level 9"
+                    />
+                    {/* <Text style={{position:'absolute', marginTop:75, fontSize:17, textAlign:'center', styleSwitch}}>asd</Text> */}
+                    </TouchableOpacity>
+                    </View>
+                    </View>
+                    
+                
+                    
+                                    
                 </View>
                
                 {/* About */}
@@ -379,7 +377,12 @@ const Lighting = ({ navigation }) => {
                     </Text>
                 </View> */}
             </View>
-        </View>
+              </View>
+        
+           
+
+           
+       
     );
 };
 
@@ -443,4 +446,4 @@ const getStyles = (styleSwitch)  => StyleSheet.create({
     },
 });
 
-export default Lighting;
+export default LightingButton;
