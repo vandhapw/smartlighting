@@ -129,7 +129,7 @@ const LightingStatus = ({ props }) => {
    
   useEffect(() => {
     const intervalId = setInterval(() => {
-      // console.log('tes')
+      console.log('tes')
       randomStore()
     }, 1000*60);
     return () => {

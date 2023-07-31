@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from 'react';
 
 import { Alert, ToastAndroid } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import { menuBackend } from './MenuBackend';
 // import { Alert, AsyncStorageStatic } from 'react-native';
 
@@ -86,7 +86,7 @@ function AuthenticationProcess({ children }) {
   function logout() {
     setAuthToken(null);
     setStatus(false);
-    AsyncStorage.removeItem('token');
+    // AsyncStorage.removeItem('token');
     // navigation.navigate("MainScreen",{
 
     // })

@@ -224,7 +224,8 @@ export const getSensorValue = async () => {
                 "datetime": expenseData.datetime,
                 "timestamps": expenseData.timestamps,
                 "saveCategory": expenseData.categoryPicked,
-                "ambientLight": expenseData.ambientLight
+                "ambientLight": expenseData.ambientLight,
+                "type": expenseData.type
       })
     };
     await fetch('https://vpw.my.id/lighting/lightingProcess.php', options)
