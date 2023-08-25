@@ -261,6 +261,101 @@ export const getSensorValue = async () => {
     }
   };
 
+  export const updateLightingData = async (dataToUpdate) => {
+    console.log('data ', dataToUpdate);
+  
+    try {
+      const response = await axios.put('http://192.168.0.5/api/VXnc7gZfhJuFFlACeZ369x5M68DAB7iluLidfvnf/lights/1/state', dataToUpdate, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      console.log(response.data);
+      return response.data;
+  
+    } catch (error) {
+      console.error("errornya disini ", error);
+      // Axios provides a response object in the error which can give more info about the error, you can access it via error.response
+      if (error.response) {
+        // The request was made and the server responded with a status code that falls out of the range of 2xx
+        console.error('Server responded with status:', error.response.status);
+        console.error('Response data:', error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an error
+        console.error('Error', error.message);
+      }
+    }
+  };
+
+  export const getRegisterLight = async () => {
+    // console.log('a')
+    try {
+      const response = await fetch(
+        'https://api.meethue.com/bridge/7MqcyyevIXdniREZAVRhnNknxIimdDWhEQ11lIjo/lights', {
+          headers: {
+            'Authorization': 'Bearer Ic57K9GZ4MjoyhAVLEZtWt4gGPiK',
+          },
+        }
+      );
+      const json = await response.json();
+        return json;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  export const hueStoringAPI = async (id, data) => {
+    console.log('id' , data)
+    try {
+      const response = await fetch(
+        `https://api.meethue.com/bridge/7MqcyyevIXdniREZAVRhnNknxIimdDWhEQ11lIjo/lights/${id}/state`, {
+          headers: {
+            'Authorization': 'Bearer Ic57K9GZ4MjoyhAVLEZtWt4gGPiK',
+            'Content-Type': 'application/json'
+          },
+          method:'PUT',
+          body: JSON.stringify(data)
+        }
+      );
+      const json = await response.json();
+        return json;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  export const hueBackend = async (data) => {
+    // console.log('a')
+    try {
+      const response = await fetch(
+        `http://203.247.166.29:8000/api/lighting/storeLighting/`, {
+          method:'POST',
+          body: JSON.stringify(data)
+        }
+      );
+      const json = await response.json();
+        return json;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  export const getLightingLog = async () => {
+    // console.log('a')
+    try {
+      const response = await fetch(
+        `http://203.247.166.29:8000/api/lighting/get-lighting-log/`);
+      const json = await response.json();
+      // console.log('json ',json)
+        return json;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
 
   // article
@@ -277,6 +372,13 @@ export const getSensorValue = async () => {
 
     return result.articles;
 }
+
+
+  // lighting
+  
+  export const HOST = 'https://192.168.0.5/api/';
+  export const permission_id= 'VXnc7gZfhJuFFlACeZ369x5M68DAB7iluLidfvnf';
+
 
 
 

@@ -86,17 +86,11 @@ function LoginForm({onSubmit}) {
         updateValue={updateInputValueHandler.bind(this, 'userPw')}
         label="Input your password"
       />
-      {/* <Pressable onPress={() => onSignInPressed()}
-        style={styles.buttonLogin}
-      >
-        <Text style={{fontWeight: 'bold',color: 'white'}}>Login</Text>
-      </Pressable> */}
-      {/* <Pressable onPress={submitHandler}
-        style={styles.buttonLogin}
-      >
-        <Text style={{fontWeight: 'bold',color: 'white'}}>Login2</Text>
-       </Pressable> */}
-       {/* <View style={[{width:'95%'}]}> */}
+
+      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+        <Text style={{color:'#000000', fontFamily:'verdana', paddingBottom: 10, textDecorationLine:'underline'}}>* Don't have account, register here!</Text>
+      </TouchableOpacity>
+    
        <Button 
        onPress={submitHandler}
        mode="contained"
@@ -106,24 +100,7 @@ function LoginForm({onSubmit}) {
        >        
          <Text style={{color:'#ffffff', width:'100%'}}>Login</Text>
        </Button>
-      
-      {/* </View> */}
-  {/* <CustomButton text="Login" onPress={submitHandler} /> */}
-      {/* <CustomButton
-        onPress={() => navigation.navigate('ForgotPasswcordScreen')}
-        text="Forgot Password"
-        type="TERTIARY"
-      /> */}
-
-      {/* <CustomButton
-          text="Don't have an account? Please create one"
-          onPress={() => onDontHaveAccount()}
-          type="TERTIARY"
-        /> */}
-
-      {/* <Pressable onPress={() => check()}>
-                        <Text>Check Button</Text>
-                    </Pressable> */}
+    
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, StyleSheet, View, ScrollView, ImageBackground, Dimensions, Image, Text } from 'react-native';
+import { Alert, StyleSheet, View, ScrollView, ImageBackground, Dimensions, Image, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Entypo';
 
@@ -21,26 +21,6 @@ function Authentication({ isLogin, onAuthenticate }) {
     userId = userId.trim();
     userPw = userPw.trim();
 
-   
-    // const emailIsValid = email.includes('@');
-    // const passwordIsValid = password.length > 6;
-    // const emailsAreEqual = email === confirmEmail;
-    // const passwordsAreEqual = password === confirmPassword;
-
-    // if (
-    //   !emailIsValid ||
-    //   !passwordIsValid ||
-    //   (!isLogin && (!emailsAreEqual || !passwordsAreEqual))
-    // ) {
-    //   Alert.alert('Invalid input', 'Please check your entered credentials.');
-    //   setCredentialsInvalid({
-    //     email: !emailIsValid,
-    //     confirmEmail: !emailIsValid || !emailsAreEqual,
-    //     password: !passwordIsValid,
-    //     confirmPassword: !passwordIsValid || !passwordsAreEqual,
-    //   });
-    //   return;
-    // }
     onAuthenticate({ userId, userPw});
   }
 
@@ -60,7 +40,7 @@ function Authentication({ isLogin, onAuthenticate }) {
               style={{color: '#ffffff', fontSize: 100}}
 
             />
-             <Text style={styles.brandText}>Klaen IoT</Text>
+             <Text style={styles.brandText}>Smart Lighting</Text>
    
         </View>
         </ImageBackground>

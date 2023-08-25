@@ -12,7 +12,7 @@ import {
     Platform,
     DeviceEventEmitter
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+// import LinearGradient from 'react-native-linear-gradient';
 
 import { images, icons, COLORS, FONTS, SIZES } from '../../constants';
 
@@ -29,7 +29,7 @@ import { storingLighting } from '../../util/getPost';
 import Geolocation from '@react-native-community/geolocation';
 import { request, PERMISSIONS } from 'react-native-permissions';
 import { startLightSensor, stopLightSensor } from 'react-native-ambient-light-sensor';
-
+import Svg, {Path,Defs, Rect, Stop, RadialGradient, Circle } from 'react-native-svg'
 
 
 
@@ -334,8 +334,25 @@ const LightingStatus = ({ props }) => {
     // randomStore()
   }
 
- 
-
+  const GlassBulb = () => {
+    return (
+      <>
+        <Defs>
+          <RadialGradient id="grad" cx="50%" cy="50%" r="50%">
+            <Stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+            <Stop offset="100%" stopColor="#d3d3d3" stopOpacity="1" />
+          </RadialGradient>
+        </Defs>
+        <Path
+          d="M12 2C8.13 2 5 5.13 5 9c0 3.17 2.44 5.78 5.5 6.67V17c0 .55.45 1 1 1s1-.45 1-1v-1.33c3.06-.89 5.5-3.5 5.5-6.67 0-3.87-3.13-7-7-7z"
+          fill="url(#grad)"
+          stroke="#000000"
+          strokeWidth="0.2"
+        />
+      </>
+    );
+  };
+  
 
 
     return (
@@ -349,6 +366,7 @@ const LightingStatus = ({ props }) => {
             }}
         /> */}
         <Text style={{ ...FONTS.h2, textAlign:'center', paddingTop:5, color:'#000000' }}>Lighting Control</Text>
+        
         <View
             style={[{
                 position: 'absolute',
@@ -362,6 +380,9 @@ const LightingStatus = ({ props }) => {
             }, styles.shadow]}
         >
             <View style={{ flexDirection: 'row' }}>
+            <Svg height="200" width="200" viewBox="0 0 24 24">
+      <GlassBulb />
+    </Svg>
                 <View style={[styles.shadow, COLORS.primary, {marginTop:30, marginStart:30}]}>
                 <IconLabel icon={lampLevel}/>
                 </View>

@@ -18,7 +18,7 @@ import { Entypo } from 'react-native-vector-icons/Entypo';
 import {BarChart } from 'react-native-chart-kit';
 import {Card, Button, TextInput} from 'react-native-paper';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { getSwitchValue, sendDataMobile, postSwitchDevice } from '../../util/getPost';
+import { getSwitchValue, sendDataMobile, postSwitchDevice, updateLightingData} from '../../util/getPost';
 import { useCsrfToken } from '@shopify/react-csrf';
 import AuthenticationProcess, {AuthProcess} from '../../util/AuthenticationProcess';
 import LightingStatus from './LightingStatus';
@@ -88,6 +88,20 @@ const LightingButton = ({ navigation }) => {
         setTextLevel("100%")
         setLevel(`Off`)
     }
+  }
+
+  const SwitchPhilipsLight = async (value) => {
+    let upcomingData = {on:value}
+    await updateLightingData(upcomingData)
+    .then(response => {
+      console.log('Data updated successfully:', response);
+      // Handle the updated data as needed
+    })
+    .catch(error => {
+      console.error('Error updating data:', error);
+      // Handle the error as needed
+    });
+
   }
 
 
@@ -277,7 +291,7 @@ const LightingButton = ({ navigation }) => {
                 {/* Icons */}
                 <View style={{ flexDirection: 'row',  paddingHorizontal: SIZES.padding * 2, justifyContent: 'space-between' }}>
                 <View>
-                <TouchableOpacity onPress={() => onChangeLampLevel(0)}>
+                <TouchableOpacity onPress={() => SwitchPhilipsLight(false)}>
                     <IconLabel
                         icon={icons.lampOff} // level 2
                         label="Off"

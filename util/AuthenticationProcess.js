@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
 
-import { Alert, ToastAndroid } from 'react-native';
+import Toast  from 'react-native-toast-message';
 
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import { menuBackend } from './MenuBackend';
@@ -51,46 +51,33 @@ function AuthenticationProcess({ children }) {
     
 
   function authenticate(token) {
-    // console.log('auth ', token)
     if(token.authID == '1'){// 1 for Login - 2 fro Register 
         if(token.message === 'success!'){
-            setAuthToken(token);
-            ToastAndroid.show(token.message, ToastAndroid.SHORT)
-            setStatus(true)
+          Toast.show({
+            type:'success',
+            position:'bottom',
+            text1: 'Success!',
+            text2: token.message,
+            visibilityTime: 2000
+          })
+          setAuthToken(token);
+          setStatus(true)
         }else {
-            // setAuthToken(false);
-            ToastAndroid.show(token.message, ToastAndroid.SHORT)
-            setStatus(false)
+          Toast.show({
+            type:'error',
+            position:'bottom',
+            text1: 'Error!',
+            text2: token.message,
+            visibilityTime: 2000
+          })
+          setStatus(false)
         }
-        // console.log('authentication', isAuthenticated);
-     
-        
     }
-    // // const navigation = useNavigation();
-    // if(token.message == 'success!'){
-    //   Alert.alert(
-    //     'Your data has been saved, successfully!!',
-    //     'Please Continue to login!!'
-    //   );        
-    // //   return <AuthProcess.Provider value={value}></AuthProcess.Provider>;
-    // }else {
-    //   setAuthToken(token);
-    //   AsyncStorage.setItem('token', JSON.stringify(token));
-  
-    // }
-      // setStatus({message: token.message, status: token.status})
   }
 
-  
-  // const navigation = useNavigation();
   function logout() {
     setAuthToken(null);
     setStatus(false);
-    // AsyncStorage.removeItem('token');
-    // navigation.navigate("MainScreen",{
-
-    // })
-    // console.log('testing ',authTempData);
   }
 
   const value = {
@@ -106,7 +93,13 @@ function AuthenticationProcess({ children }) {
   
   // console.log('value ', value)
 
-  return <AuthProcess.Provider value={value}>{children}</AuthProcess.Provider>;
+  return (
+    <>
+    <AuthProcess.Provider value={value}>{children}</AuthProcess.Provider>
+    <Toast />
+    </>
+
+  )
 }
 
 export default AuthenticationProcess;
