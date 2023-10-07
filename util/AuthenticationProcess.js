@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 
 import Toast  from 'react-native-toast-message';
+import { useNavigation } from '@react-navigation/native';
 
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import { menuBackend } from './MenuBackend';
@@ -13,7 +14,13 @@ export const AuthProcess = createContext({
   isAuthenticated: false,
   authenticate: (isStatus) => {},
   register: (tempData) => {},
-  logout: () => {},
+  logout: () => {
+    // const navigation = useNavigation();
+    // navigation.reset({
+    //   index:0,
+    //   routes:[{name:'LoginScreen'}],
+    // })
+  },
   
 });
  
@@ -52,7 +59,7 @@ function AuthenticationProcess({ children }) {
 
   function authenticate(token) {
     if(token.authID == '1'){// 1 for Login - 2 fro Register 
-        if(token.message === 'success!'){
+        if(token.message.message === 'success!'){
           Toast.show({
             type:'success',
             position:'bottom',
@@ -67,7 +74,7 @@ function AuthenticationProcess({ children }) {
             type:'error',
             position:'bottom',
             text1: 'Error!',
-            text2: token.message,
+            text2: token.message.message,
             visibilityTime: 2000
           })
           setStatus(false)
@@ -75,7 +82,7 @@ function AuthenticationProcess({ children }) {
     }
   }
 
-  function logout() {
+  function logout(navigation) {
     setAuthToken(null);
     setStatus(false);
   }

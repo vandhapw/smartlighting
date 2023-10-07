@@ -14,9 +14,16 @@ import SignupScreen from '../screens/Signup';
 // import HumidityChart from '../screens/sidebar/HumidityChart';
 import Control from '../screens/sidebar/Control';
 import LightingScreen from '../screens/lighting/LightingScreen';
-import BulbRoom from '../screens/lighting/BulbRoom';
+// import BulbRoom from '../screens/lighting/BulbRoom';
+import BulbRoom from '../screens/lighting/lightBulb/BulbRoom';
 // import ContextState like session
 import AuthenticationProcess, {AuthProcess} from '../util/AuthenticationProcess';
+
+import HomeScreen from '../screens/lighting/home/HomeScreen';
+import TimeSetting from '../screens/lighting/timesetting/TimeSetting';
+import LightUsage from '../screens/lighting/usage/LightUsage';
+import HistoryUser from '../screens/lighting/history/HistoryUser';
+import  Icon  from 'react-native-vector-icons/FontAwesome';
 
 
 const Drawer = createDrawerNavigator();
@@ -71,6 +78,46 @@ function RoomNavigator() {
   )
 }
 
+function BottomTabs({navigation}){
+  return (
+    <Tabs.Navigator>
+      <Tabs.Screen name='Home Screen' component={HomeScreen} 
+        options={{headerShown:false,
+        tabBarIcon:({}) => (
+          <Icon name='home' size={25} />
+        )
+      }} />
+      <Tabs.Screen name='Time Setting' component={TimeSetting} 
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            e.preventDefault();
+
+            navigation.navigate('Time Setting', {briLight:0, satLight:0,hueLight:0, initialState:{0:0}, timer:0, tempId:0})
+          }
+        })}
+        options={{headerShown:false,
+        tabBarIcon:({}) => (
+            <Icon name='clock-o' size={25}/>
+        )  
+      }} />
+      <Tabs.Screen name='Usage' component={LightUsage} 
+      options={{headerShown:false,
+        tabBarIcon:({}) => (
+          <Icon name='bar-chart'size={25} />
+        )
+      }} />
+      <Tabs.Screen name='History' component={HistoryUser} 
+      options={{headerShown:false,
+        tabBarIcon:({}) => (
+          <Icon name='history' size={25}/>
+        )
+      }} />
+    </Tabs.Navigator>
+  )
+  
+  
+}
+
   //testing
 function AuthStack(){
   return (
@@ -104,13 +151,14 @@ function AuthStack(){
 
 function AppDrawerContent(props){
   const authCtx = useContext(AuthProcess)
+  const username = authCtx && authCtx.token && authCtx.token.username ? authCtx.token.username : "no name"; 
 
   return (
      <DrawerContentScrollView {...props} contentContainerStyle={{flex:1}}>
        {/*all of the drawer items*/}
        <View style={{marginTop:20, marginStart: 10, marginBottom: 10}}>
-          <Text style={{fontSize:14, fontWeight:'bold'}}>Hello welcome, {authCtx.token.username}!</Text>       
-       </View>
+          <Text style={{fontSize:14, fontWeight:'bold'}}>Hello welcome, {username}!</Text>       
+        </View>
        <DrawerItemList {...props}  style={{borderWidth:1}}/>
        <View style={{flex:1,marginTop:200, }}>
           
@@ -154,14 +202,22 @@ function AppDrawerContent(props){
 function AuthenticatedStack(){
 
   const authCtx = React.useContext(AuthProcess)
-  console.log(authCtx)
-  // console.log("Token ID ", authCtx)
-  // username = authCtx.menu[0].menu_id
-  // console.log(authCtx.menu[0].menu_id)
-
+ 
   return (
   <Drawer.Navigator drawerContent={props=><AppDrawerContent {...props} />} >
-    <Drawer.Screen name="Home" component={LightingScreen}
+    <Drawer.Screen name="Home" component={BottomTabs}
+    options={{
+      headerTitle:() => (
+        ""
+      ),
+      headerStyle: {
+        backgroundColor:'#FFFFFF'
+      },
+      headerShown: false
+    }}
+    />
+
+    {/* <Drawer.Screen name="Home" component={HomeScreen}
         options={{
           headerTitle: () => (
               ""
@@ -169,9 +225,9 @@ function AuthenticatedStack(){
           headerStyle: {
           backgroundColor: '#ffffff'
         },
-          headerShown: true
+          headerShown: false
       }}
-    />
+    /> */}
     
     <Drawer.Screen name="Control" component={Control}
     options={{
@@ -192,7 +248,7 @@ function AuthenticatedStack(){
     headerStyle: {
     backgroundColor: '#ffffff'
   },
-      headerShown: true
+      headerShown: false
   }}
     />
     {/* <Drawer.Screen name="Logout" component={LogoutFunction} /> */}

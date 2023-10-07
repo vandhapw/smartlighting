@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "435647584702",
+    "project_id": "smartlighting-25ce0",
+    "storage_bucket": "smartlighting-25ce0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435647584702:android:92bfc4b00a7473277081ef",
+        "android_client_info": {
+          "package_name": "com.myorg.smartlighting"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfrgmQThCgOguq2y5u3o1Cpd_dZNMB8-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

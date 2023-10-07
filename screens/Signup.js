@@ -83,13 +83,14 @@ function Signup() {
                 text2: response.message,
                 visibilityTime: 2000
               })
+            navigation.navigate("LoginScreen")
         })
         .catch(error => {
             Toast.show({
                 type:'error',
                 position:'bottom',
                 text1: 'Error!',
-                text2: error,
+                text2: `Error :`,error,
                 visibilityTime: 2000
               })
         })
@@ -216,11 +217,15 @@ function Signup() {
               </>  
             )}
 
+            <View style={{flexDirection:'column'}}>
+                <View style={{marginBottom:10}}>
+                    <Button title="Register" onPress={handleSubmit} />
+                </View>
+                <View>
+                    <Button title="Login" onPress={() => navigation.navigate('Login')} />
+                </View>
+            </View>
             
-        
-
-            <Button title="Register" onPress={handleSubmit} />
-            <Button style={{paddingTop:10}} title="Login" onPress={() => navigation.navigate('Login')} />
             </ScrollView>
             <Toast />
         </View>

@@ -31,6 +31,7 @@ export const lamp75 = require("../assets/icons/75-lamp.png");
 export const lamp40 = require("../assets/icons/40-lamp.png");
 export const lamp10 = require("../assets/icons/10-lamp.png");
 export const lampOff = require("../assets/icons/off-lamp.png");
+export const phillipsBulb = require("../assets/icons/philipsBulb.png");
 
 
 export default {
@@ -66,5 +67,6 @@ export default {
     lamp100,
     lamp40,
     lamp75,
-    lampOff
+    lampOff,
+    phillipsBulb
 }

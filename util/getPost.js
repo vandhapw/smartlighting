@@ -295,16 +295,15 @@ export const getSensorValue = async () => {
     // console.log('a')
     try {
       const response = await fetch(
-        'https://api.meethue.com/bridge/7MqcyyevIXdniREZAVRhnNknxIimdDWhEQ11lIjo/lights', {
-          headers: {
-            'Authorization': 'Bearer Ic57K9GZ4MjoyhAVLEZtWt4gGPiK',
-          },
-        }
+      'http://203.247.166.29:8000/api/lighting/status-bulb/'
       );
+      
       const json = await response.json();
+      // console.log(json)
         return json;
     } catch (error) {
       console.error(error);
+      return error
     }
   };
 
@@ -338,7 +337,7 @@ export const getSensorValue = async () => {
         }
       );
       const json = await response.json();
-        return json;
+      return json;
     } catch (error) {
       console.error(error);
     }
@@ -349,6 +348,32 @@ export const getSensorValue = async () => {
     try {
       const response = await fetch(
         `http://203.247.166.29:8000/api/lighting/get-lighting-log/`);
+      const json = await response.json();
+      // console.log('json ',json)
+        return json;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  export const getEnergyConsumption = async () => {
+    // console.log('a')
+    try {
+      const response = await fetch(
+        `http://203.247.166.29:8000/api/lighting/energy-consumption/`);
+      const json = await response.json();
+      // console.log('json ',json)
+        return json;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  export const getLogHistory = async () => {
+    // console.log('a')
+    try {
+      const response = await fetch(
+        `http://203.247.166.29:8000/api/lighting/history-log/`);
       const json = await response.json();
       // console.log('json ',json)
         return json;

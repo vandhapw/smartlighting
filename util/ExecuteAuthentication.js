@@ -33,18 +33,24 @@ export async function AuthLogin(userId, userPw) {
     //  await axios.get(BASE_URL+'/account/login/api',
     // await axios.get(`http://139.150.73.211:8000/account/logins/api?username=${userId}&password=${userPw}`)
     try {
-      const response = await axios.get(`http://139.150.73.211:8000/account/login/api?username=${userId}&password=${userPw}`)
-      // const json = await response.json();
+      const options = {
+        Headers: {'Content-Type' : 'application/json', 'Accept': 'application/json, text/plain, */*'},
+      }
+      const body = {
+          "username": userId,
+          "password": userPw
+      }
+      const response = await axios.post(`http://203.247.166.29:8000/api/lighting/klaen-login/`,body,options)
       let token = {
               message: response.data,
               username: userId,
               authID: '1'
-            }
-      // console.log(token)
-   
+        }
     return token;
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      return error
+      
     }
  }
     
