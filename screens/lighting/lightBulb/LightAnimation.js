@@ -39,12 +39,12 @@ const LightAnimation = ({data, navigation}) => {
       // console.log(status)
     }
     function changeSaturation(newvalue){
-      data.status = 1
+      data.status = status
       setSaturation(newvalue)
       // console.log(status)
     }
     function changeHue(newvalue){
-      data.status = 1
+      data.status = status
       setHue(newvalue)
       // console.log(status)
     }
@@ -182,7 +182,7 @@ function hsbToRgb(hue, saturation, brightness) {
        "lightBri" : Math.round((brightness / 100) * 255),
        "lightCT" : lightCT,
        "lightStatus" : true,
-       "lightId" : lightid,
+       "lightId" : parseInt(lightid),
        "roomName" : roomName,
        "switchMode":"apps-level",
        "deviceTemp":null,
@@ -225,11 +225,12 @@ function hsbToRgb(hue, saturation, brightness) {
     //    "device": device
     // }
 
-    navigation.navigate('Time Setting', {briLight:Math.round(hue * (65535 / 360)), satLight:Math.round((saturation / 100) * 255), hueLight:Math.round((brightness / 100) * 255), initialState:{[data.tempId]:1}, status:6, tempId:data.tempId})
+    navigation.navigate('Time Setting', {hueLight:Math.round(hue * (65535 / 360)), satLight:Math.round((saturation / 100) * 255), briLight:Math.round((brightness / 100) * 255), initialState:{[data.tempId]:1}, status:6, tempId:data.tempId})
   }
 
   const turnOFF = () => {
     id = lightid
+    // console.log('on change Status ',onChangeStatus)
     
     dataBackend = {
       "username":authCtx.token.username,
@@ -238,7 +239,7 @@ function hsbToRgb(hue, saturation, brightness) {
        "lightBri" : Math.round((brightness / 100) * 255),
        "lightCT" : lightCT,
        "lightStatus" : onChangeStatus,
-       "lightId" : lightid,
+       "lightId" : parseInt(lightid),
        "roomName" : roomName,
        "switchMode":"apps-level",
        "deviceTemp":null,
@@ -247,6 +248,8 @@ function hsbToRgb(hue, saturation, brightness) {
        "location": location,
        "device": device
     }
+
+    // console.log('data backend ', dataBackend)
 
     hueBackend(dataBackend)
     .then((res) => {

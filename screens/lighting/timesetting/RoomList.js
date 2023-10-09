@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -10,11 +10,15 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { getRegisterLight } from '../../../util/getPost';
 import { icons, COLORS, FONTS } from '../../../constants';
 import { Card } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthProcess } from '../../../util/AuthenticationProcess';
+import { user } from '../../../constants/icons';
+import { hueBackend } from '../../../util/getPost';
 
 const IconLabel = ({ icon, label }) => {
   return (
@@ -50,18 +54,28 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
   const [labelSwitch, setLabelSwitch] = useState({});
   const [btnDisabled, setBtnDisabled] = useState(true)
   const [data, setData] = useState([]);  
-  const [storedValue, setStoredValue] = useState('')
+  const [isLocation, setLocation] = useState('')
+  const isFocused = useIsFocused();
+  
+  const authCtx = useContext(AuthProcess)
+  const username = authCtx && authCtx.token && authCtx.token.username ? authCtx.token.username : "no name"; 
+
+
   // const [labelBtn, setLabelBtn] = useState({})
 
-  const {briLight,satLight,hueLight, initialState, status,tempId} = timeSettingData
+  let {briLight,satLight,hueLight, initialState, status,tempId} = timeSettingData
   
+  // console.log('timesettingdata ',timeSettingData)
   const fetchRegisterLight = async () => {
     try {
       const response = await getRegisterLight();
-      console.log('response ', response);
-      const value = await AsyncStorage.getItem('@location')
-      if(value !== null){
-        setStoredValue(value)
+      // console.log('response ', response);
+      const locationValue = await AsyncStorage.getItem('@location')
+      if(locationValue !== null){
+        setLocation(locationValue)
+        console.log('Item value ', locationValue)
+      }else {
+        console.log('Item not found')
       }
       // const lightData = Object.entries(response).map(([key, value]) => {
       //   const { name: roomName, state: { hue, bri } } = value;
@@ -91,15 +105,16 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
 
   useEffect(() => {
     fetchRegisterLight();
-    console.log('label  switch', timeSettingData)
+    // console.log('username', username)
 
-    // if(status === 6){
-    //   set
-    // }
-  }, [selfTime, initialState]);
+    if(status === 6){
+      timerCounter(selfTime[tempId], tempId)
+    }
+
+    
+  }, [timeSettingData]);
 
   const timerCounter = (timer, id) => {
-    setTimeSetup(true)
     if (timer > 0) {
       timer = Number(timer);
       let currentDates = new Date();
@@ -127,6 +142,8 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
           setLabelSwitch((prevLabelSwitch) => {
             const newLabelSwitch = { ...prevLabelSwitch };
             newLabelSwitch[id] = 0;
+            console.log('run this code')
+            ConvenienceLogicSet(id,"Office 4")
             return newLabelSwitch;
           });
 
@@ -161,7 +178,10 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
   };
 
   const resetTimer = (id) => {
+    status = 0
     const timerInterval = labelSwitch[id];
+    console.log(id, timerInterval)
+    
     if (timerInterval) {
       clearInterval(timerInterval);
       setLabelSwitch((prevLabelSwitch) => {
@@ -188,16 +208,16 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
   
   
 
-  const ConvenienceLogicSet = (id, roomName, timer) => {
-    console.log('convenience', id,roomName,timer)
+  const ConvenienceLogicSet = (id, roomName) => {
+    console.log('convenience', id,roomName)
     // timerCounter(timer,id, roomName)
     
     dataBackend = {
-      "username":authCtx.token.username,
+      "username":username,
       "lightHue" : hueLight,
        "lightSat" : satLight,
        "lightBri" : briLight,
-       "lightCT" : lightCT,
+       "lightCT" : null,
        "lightStatus" : true,
        "lightId" : id,
        "roomName" : roomName,
@@ -205,8 +225,8 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
        "deviceTemp":null,
        "lightLuminance":null,
        "motion":null,
-       "location": location,
-       "device": device
+       "location": isLocation,
+       "device": Platform.OS
     }
 
     hueBackend(dataBackend)
@@ -216,7 +236,7 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
         type:'success',
         position: 'bottom',
         text1: `Light of ${dataBackend.roomName}`,
-        text2: 'has turned OFF successfully',
+        text2: 'The light has changed successfully',
         visibilityTime: 2000,
       })
       navigation.goBack();
@@ -249,8 +269,8 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
           lightHue:lightHue,
           reachable:reachable,
           lightSat:lightSat,
-          status:status,
-          location: location,
+          status:0,
+          location: isLocation,
           device:device,
           menu:"timeSetting",
           timer:selfTime[id],
@@ -265,13 +285,13 @@ const RoomList = ({ route, navigation, timeSettingData }) => {
     let label;
     let isTouchableDisabled = false;
     // const { lightid, roomName, lightStatus, lightBri, lightCT, lightHue, reachable, lightSat,status, location, device } = route.params;
-    let paramsData = {"lightId":id, "roomName":item.data.name, "lightStatus":item.data.state.on, "lightBri":item.data.state.bri,"lightCT":item.data.state.ct,"lightHue":item.data.state.hue, "lightSat":item.data.state.sat, "status":'5',"reachable":item.data.state.reachable, "location":storedValue, "device":Platform.OS }
+    let paramsData = {"lightId":id, "roomName":item.data.name, "lightStatus":item.data.state.on, "lightBri":item.data.state.bri,"lightCT":item.data.state.ct,"lightHue":item.data.state.hue, "lightSat":item.data.state.sat, "status":'5',"reachable":item.data.state.reachable, "location":isLocation, "device":Platform.OS }
     if(paramsData.lightStatus === false){
       paramsData.lightBri = 0
       paramsData.lightHue = 0
       paramsData.lightSat = 0
     }
-    console.log('params ', paramsData)
+    // console.log('params ', paramsData)
 
     if (item.data.state.reachable === true && item.data.state.on === true) {
       label = 'ON';

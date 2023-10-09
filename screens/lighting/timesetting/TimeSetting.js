@@ -9,11 +9,11 @@ import RoomList from './RoomList'
 
 const TimeSetting = ({route, navigation}) => {
     
-    const {briLight,satLight,hueLight, initialState,status, tempId} = route.params
+    const {hueLight,satLight,briLight, initialState,status, tempId, device, location} = route.params
     
-    dataValue = {briLight,satLight,hueLight, initialState,tempId}
+    dataValue = {briLight,satLight,hueLight, initialState,status,tempId, device, location}
 
-    console.log('time setting ', dataValue)
+    // console.log('time setting ', dataValue)
     
     return (
       // <ScrollView>

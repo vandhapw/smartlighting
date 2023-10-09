@@ -92,7 +92,7 @@ function BottomTabs({navigation}){
           tabPress: e => {
             e.preventDefault();
 
-            navigation.navigate('Time Setting', {briLight:0, satLight:0,hueLight:0, initialState:{0:0}, timer:0, tempId:0})
+            navigation.navigate('Time Setting', {briLight:0, satLight:0,hueLight:0, initialState:{0:0}, timer:0, tempId:0, device:'',location:0})
           }
         })}
         options={{headerShown:false,
