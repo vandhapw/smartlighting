@@ -38,6 +38,7 @@ const EnergyConsumption = ({route, navigation}) => {
       setLoading(false)
       // console.log('log ', response)
     } catch (error) {
+      setEnergyConsumption("No Data")
       console.error("Error fetching Lighting Log:", error);
     }
   }

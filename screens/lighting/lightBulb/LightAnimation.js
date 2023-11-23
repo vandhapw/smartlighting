@@ -6,6 +6,7 @@ import LevelOption from './LevelOption';
 import { AuthProcess } from '../../../util/AuthenticationProcess';
 import { hueBackend } from '../../../util/getPost';
 import Toast from 'react-native-toast-message';
+import LoadingOverlay from '../../../component/LoadingOverlay';
 
 const LightAnimation = ({data, navigation}) => {
 
@@ -20,6 +21,7 @@ const LightAnimation = ({data, navigation}) => {
     const [label2, setLabel2] = useState();
     const [onChangeStatus, setOnChangeStatus] = useState();
     const [switchBtn, setSwitchBtn] = useState();
+    const [isLoading, setIsLoading] = useState(false);
 
     function initialBulbCondition(hue, sat,bri){
         let hsbHue =  Math.floor((hue / 65535) * 360)
@@ -38,12 +40,12 @@ const LightAnimation = ({data, navigation}) => {
       setBrightness(newvalue)
       // console.log(status)
     }
-    function changeSaturation(newvalue){
+    function changeSaturation(newvalue, status){
       data.status = status
       setSaturation(newvalue)
-      // console.log(status)
+      // console.log('status', status)
     }
-    function changeHue(newvalue){
+    function changeHue(newvalue, status){
       data.status = status
       setHue(newvalue)
       // console.log(status)
@@ -137,7 +139,7 @@ function hsbToRgb(hue, saturation, brightness) {
   const [bulbColor, setBulbColor] = useState(hexColor); // Default color
   
   useEffect(() => {
-   
+
     if(status == 0){
     let newLightHue,newLightSat,newLightBri =  initialBulbCondition(lightHue, lightSat, lightBri)
     changeBrightness(newLightBri)
@@ -146,10 +148,16 @@ function hsbToRgb(hue, saturation, brightness) {
     // lightBri = newLightBri  
     }else if(status == 1) {
       changeBrightness(brightness)
+      changeHue(hue)
+      changeSaturation(saturation)
     }else if(status == 2){
       changeBrightness(brightness)
+      changeHue(hue)
+      changeSaturation(saturation)
     }else if (status == 4){
       changeBrightness(lightBri)
+      changeHue(lightHue),
+      changeSaturation(lightSat)
     }
 
     if(lightStatus){
@@ -166,13 +174,13 @@ function hsbToRgb(hue, saturation, brightness) {
       setLabel2("Store Convenience Bulb")
     }
 
-    console.log('label',label, data)
+    console.log('status',isLoading)
 
     const { r, g, b } = hsvToRgb(hue * (65535 / 360), saturation, brightness);
     
     setBulbColor(rgbToHex(r, g, b));
   
-  }, [brightness, saturation, hue, status,data, label]);
+  }, [brightness, saturation, hue, status,data, label, isLoading]);
 
   const saveButton = () => {
     dataBackend = {
@@ -191,6 +199,7 @@ function hsbToRgb(hue, saturation, brightness) {
        "location": location,
        "device": device
     }
+    setIsLoading(true)
 
     hueBackend(dataBackend)
     .then((res) => {
@@ -202,6 +211,7 @@ function hsbToRgb(hue, saturation, brightness) {
         text2: 'Has been Changed Successfully',
         visibilityTime: 6000
       })
+      setIsLoading(false)
       navigation.goBack();
       return null;
     } )
@@ -231,6 +241,7 @@ function hsbToRgb(hue, saturation, brightness) {
   const turnOFF = () => {
     id = lightid
     // console.log('on change Status ',onChangeStatus)
+    setIsLoading(true)
     
     dataBackend = {
       "username":authCtx.token.username,
@@ -253,7 +264,7 @@ function hsbToRgb(hue, saturation, brightness) {
 
     hueBackend(dataBackend)
     .then((res) => {
-      console.log('response backend', res.message)
+      // console.log('response backend', res.message)
       Toast.show({
         type:'success',
         position: 'bottom',
@@ -261,6 +272,7 @@ function hsbToRgb(hue, saturation, brightness) {
         text2: 'has turned OFF successfully',
         visibilityTime: 2000,
       })
+      setIsLoading(false)
       navigation.goBack();
     } )
   }
@@ -343,8 +355,11 @@ function hsbToRgb(hue, saturation, brightness) {
 
 return (
   <>
+  
   <SafeAreaView style={{flex:1}}>
     <ScrollView contentContainerStyle={{flexGrow: 1}}>
+    {isLoading ? (<LoadingOverlay message="Saving Bulb" />) : (null)  }
+  
       <View style={styles.bulbContainer}>
       {/* <View style={[styles.bulb, { backgroundColor: color, opacity: brightness, position:'absolute' }]} /> */}
         <View style={{marginBottom:20}}>
@@ -353,7 +368,9 @@ return (
             width="250"
             height="350"
           />
-        </View>    
+        </View>   
+      
+       
 
       <View style={styles.controls}>
         <Text style={{}}>Hue : {hue}</Text>
@@ -363,7 +380,7 @@ return (
             minimumValue={0}
             maximumValue={360}
             value={hue}
-            onValueChange={(newvalue) => changeHue(newvalue) }
+            onValueChange={(newvalue) => changeHue(newvalue,2) }
             step={1}
             // style={{ flex: 1 }}
           />
@@ -375,7 +392,7 @@ return (
             minimumValue={0}
             maximumValue={100}
             value={saturation}
-            onValueChange={(newvalue) => changeSaturation(newvalue)}
+            onValueChange={(newvalue) => changeSaturation(newvalue,2)}
             step={1}
           />
 

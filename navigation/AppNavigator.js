@@ -229,7 +229,7 @@ function AuthenticatedStack(){
       }}
     /> */}
     
-    <Drawer.Screen name="Control" component={Control}
+    <Drawer.Screen name="Time Setting" component={TimeSetting}
     options={{
       headerTitle: () => (
         ""
@@ -240,7 +240,29 @@ function AuthenticatedStack(){
       headerShown: true
   }}
     />
-    <Drawer.Screen name="Lighting App Lists" component={RoomNavigator}
+    <Drawer.Screen name="Light Usage" component={LightUsage}
+    options={{
+      headerTitle: () => (
+        ""
+    ),
+    headerStyle: {
+    backgroundColor: '#ffffff'
+  },
+      headerShown: false
+  }}
+    />
+     <Drawer.Screen name="Lighting App Lists" component={RoomNavigator}
+    options={{
+      headerTitle: () => (
+        ""
+    ),
+    headerStyle: {
+    backgroundColor: '#ffffff'
+  },
+      headerShown: false
+  }}
+    />
+    <Drawer.Screen name="History usage" component={HistoryUser}
     options={{
       headerTitle: () => (
         ""

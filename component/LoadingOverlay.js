@@ -2,9 +2,11 @@ import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native';
 
 function LoadingOverlay({ message }) {
   return (
-    <View style={styles.rootContainer}>
+    <View style={[StyleSheet.absoluteFillObject, styles.rootContainer]}>
       <Text style={styles.message}>{message}</Text>
-      <ActivityIndicator size="large" />
+       <ActivityIndicator size="large" /> 
+      {/* <Image source={require('../assets/images/loading-unscreen.gif')} style={{width:100,height:100}} /> */}
+      {/* <LottieView source={require('../assets/images/animationLoading.json')} autoPlay loop/> */}
     </View>
   );
 }
@@ -17,6 +19,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    zIndex:1,
   },
   message: {
     fontSize: 16,

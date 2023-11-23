@@ -1,7 +1,8 @@
 import axios from 'axios';
 // const API_KEY = 'AIzaSyDCYasArcOwcALFhIj2szug5aD2PgUQu1E'
 const BASE_URL = "http://139.150.73.211:8000/";
-const LAB_URL = "http://203.247.166.29:8000/api/lighting/register/"
+const LAB_URL = "http://203.247.166.29:8000/lighting/api/lighting/register/"
+const SERVER_URL = "http://lightbusanko.com/lighting/"
 
 // function 
 export async function createUser(data) {
@@ -40,7 +41,7 @@ export async function AuthLogin(userId, userPw) {
           "username": userId,
           "password": userPw
       }
-      const response = await axios.post(`http://203.247.166.29:8000/api/lighting/klaen-login/`,body,options)
+      const response = await axios.post(`${SERVER_URL}api/lighting/klaen-login/`,body,options)
       let token = {
               message: response.data,
               username: userId,
@@ -53,6 +54,24 @@ export async function AuthLogin(userId, userPw) {
       
     }
  }
+
+ export async function sendToken(token) {
+  try {
+    const options = {
+      Headers: {'Content-Type' : 'application/json', 'Accept': 'application/json, text/plain, */*'},
+    }
+    const body = {
+        "token": token,
+    }
+    const response = await axios.post(`http://203.247.166.29:8000/api/lighting/fetch-token/`,body,options)
+    
+  return response;
+  } catch (error) {
+    // console.error(error);
+    return error
+    
+  }
+}
     
   
   

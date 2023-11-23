@@ -103,7 +103,7 @@ const HomeScreen = ({ route, navigation }) => {
     // Handle incoming notifications when the app is in the foreground
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       // Handle the received notification when the app is in the foreground
-      console.log('Notification received in the foreground:', remoteMessage);
+      // console.log('Notification received in the foreground:', remoteMessage);
     });
 
     // messaging().onNotification(notification => {
@@ -122,7 +122,7 @@ const HomeScreen = ({ route, navigation }) => {
  // Function to handle foreground messages
 messaging().onMessage(async remoteMessage => {
   try {
-    console.log('Foreground Message Received:', remoteMessage);
+    // console.log('Foreground Message Received:', remoteMessage);
     if (Platform.OS === 'android') {
       const notification = remoteMessage.notification;
       if (notification) {
@@ -145,7 +145,7 @@ messaging().onMessage(async remoteMessage => {
 // Function to handle background messages
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   try {
-    console.log('Background Message Received:', remoteMessage);
+    // console.log('Background Message Received:', remoteMessage);
     // Add your background handling logic here
   } catch (error) {
     console.error('Error handling background message:', error);

@@ -13,7 +13,8 @@ import PushNotification from 'react-native-push-notification';
 import messaging from '@react-native-firebase/messaging';
 import { Permission, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { sendToken } from './util/ExecuteAuthentication';
 
 
 const App = () => {
@@ -64,9 +65,18 @@ const customToastStyles = {
   async function pushNotification(){
     let fcmToken = await messaging().getToken();
     if(fcmToken){
-      console.log('token ', fcmToken)
+    try{
+      await AsyncStorage.setItem('fcmToken', fcmToken);
+      sendToken(fcmToken)
+      .then((res) => {
+        console.log(res["config"]["data"]["token"])
+      })
+      console.log('fcmTOken stored in Async Storage')
+    }catch (error){
+      console.error('Error storing token in Async Storage', error)
     }
   }
+}
 
   return (   
           <NavigationMenu />

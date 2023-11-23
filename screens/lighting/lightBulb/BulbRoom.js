@@ -6,6 +6,7 @@ import LightLevel from './LightLevel';
 import LevelOption from './LevelOption';
 import LightStatus from './LightStatus';
 import { ScrollView } from 'react-native-gesture-handler';
+import LoadingOverlay from '../../../component/LoadingOverlay';
 
 
 
@@ -18,7 +19,7 @@ const BulbRoom = ({route, navigation}) => {
   const data = {
     lightid, roomName, lightStatus, lightBri, lightCT, lightHue, reachable, lightSat, status, location, device, menu, timer ,tempId }
   
-    console.log('bulb', data)
+    // console.log('bulb', data)
 
 
 

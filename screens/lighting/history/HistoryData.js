@@ -240,7 +240,9 @@ function HistoryData(){
       <View>
       <Text style={[styles.title,{color:'#060047'}]}>Light Name : {item.roomName} </Text>
       <Text style={styles.smallText}>User : {item.username}</Text>
-      <Text style={styles.smallText}>Location: {item.location ? `Latitude: ${item.location.latitude.toFixed(2)}, Longitude: ${item.location.longitude.toFixed(2)}` : 'N/A'}</Text>
+      <Text style={styles.smallText}>Location:  {item.location && item.location.latitude !== undefined && item.location.longitude !== undefined 
+    ? `Latitude: ${item.location.latitude.toFixed(2)}, Longitude: ${item.location.longitude.toFixed(2)}`
+    : 'N/A'}</Text>
       <Text style={styles.smallText}>Activity: {item.lightStatus ? `TURN ON LIGHT` : 'TURN OFF LIGHT'}</Text>
       </View>
       <View>

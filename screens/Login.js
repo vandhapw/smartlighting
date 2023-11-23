@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert, ToastAndroid } from "react-native"
 
 import LoadingOverlay from "../component/LoadingOverlay";
+import ModalLoading from "../component/ModalLoading";
 import Authentication from "../component/authentication/Authentication";
 import {AuthLogin} from "../util/ExecuteAuthentication"
 
@@ -66,15 +67,20 @@ function Login (){
         setIsAuthenticating(false);
         }
       }
-
+      
       return (
-        <>
-        <Authentication onAuthenticate={signInHandler} />
-        {isAuthenticating && <LoadingOverlay message="Sign in ..." />}
-        <Toast />
-        </>       
+        isAuthenticating ? (
+          <LoadingOverlay message="Sign in ..." />
+          // <ModalLoading message="Sign in" />
+        ) : (
+          <>
+          <Authentication onAuthenticate={signInHandler} />
+        
+          <Toast />
+        </>      
+        )
+         
       )
-    
 }
 
 

@@ -7,7 +7,7 @@ import  Icon  from 'react-native-vector-icons/FontAwesome';
 const LevelOption  = ({data, navigation}) => {
     let { lightid, roomName, lightStatus, lightBri, lightCT, lightHue, reachable, lightSat, status, brightness } = data;
     
-    console.log('level option',data)
+    // console.log('level option',data)
     const [updateLightBri, setUpdateLightBri] = useState(lightBri)
 
     const [progress, setProgress] = useState(0)
@@ -37,8 +37,8 @@ const LevelOption  = ({data, navigation}) => {
 
     
 
-    console.log('bright ', updateLightBri)
-    console.log('bright value ', brightness)
+    // console.log('bright ', updateLightBri)
+    // console.log('bright value ', brightness)
 
     function changeLevel(min, max){
         const number = Math.floor(Math.random() * (max - min + 1)) + min;
